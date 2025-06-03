@@ -138,8 +138,14 @@ def main():
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
         html, body, [class*="css"]  {
             font-family: 'Inter', sans-serif !important;
+        }
+        .dark-theme {
             background: #121212;
             color: #fff !important;
+        }
+        .light-theme {
+            background: #f5f5f5;
+            color: #333 !important;
         }
         .stApp {
             background: transparent;
@@ -268,16 +274,16 @@ def main():
             st.session_state['theme'] = 'light'
             st.markdown("""
             <script>
-            document.body.style.background = '#f5f5f5';
-            document.body.style.color = '#333';
+            document.body.classList.remove('dark-theme');
+            document.body.classList.add('light-theme');
             </script>
             """, unsafe_allow_html=True)
         elif theme == "Темная" and st.session_state['theme'] != 'dark':
             st.session_state['theme'] = 'dark'
             st.markdown("""
             <script>
-            document.body.style.background = '#121212';
-            document.body.style.color = '#fff';
+            document.body.classList.remove('light-theme');
+            document.body.classList.add('dark-theme');
             </script>
             """, unsafe_allow_html=True)
         st.markdown("""
