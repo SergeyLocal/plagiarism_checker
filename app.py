@@ -405,7 +405,7 @@ def main():
     # --- Модный футер ---
     st.markdown("""
     <div class='custom-footer'>
-        <span>Made with ❤️ for <b>молодёжь</b> | <a href='https://github.com/SergeyLocal/plagiarism_checker' style='color:#38ef7d;' target='_blank'>GitHub</a> | <a href='https://t.me/SergeyLocal' style='color:#ffb347;' target='_blank'>Telegram</a></span>
+        <span>Made with ❤️ for <b>молодёжь</b> | <a href='https://github.com/SergeyLocal/plagiarism_checker' style='color:#38ef7d;' target='_blank'>GitHub</a> | <a href='https://t.me/SKIZZI4I' style='color:#ffb347;' target='_blank'>Telegram</a></span>
     </div>
     """, unsafe_allow_html=True)
 
