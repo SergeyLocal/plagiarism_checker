@@ -127,33 +127,128 @@ def rewrite_text(text, api_key):
     return "\n".join(rewritten_chunks)
 
 def main():
-    st.set_page_config(page_title="Проверка на плагиат", layout="wide")
-    
+    st.set_page_config(page_title="Проверка на плагиат — Plagiarism Checker", layout="wide")
+
+    # --- Кастомный CSS для модного дизайна ---
+    st.markdown(
+        """
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+        html, body, [class*="css"]  {
+            font-family: 'Montserrat', sans-serif !important;
+            background: linear-gradient(135deg, #1f1c2c 0%, #928dab 100%) fixed;
+            color: #fff !important;
+        }
+        .stApp {
+            background: transparent;
+        }
+        .stButton>button {
+            background: linear-gradient(90deg, #ff512f 0%, #dd2476 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6em 1.5em;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 4px 20px #dd247655;
+            transition: 0.2s;
+        }
+        .stButton>button:hover {
+            background: linear-gradient(90deg, #24c6dc 0%, #5433ff 100%);
+            color: #fff;
+            transform: scale(1.05);
+        }
+        .stTextInput>div>div>input[type="password"] {
+            background: #232526;
+            color: #fff;
+            border-radius: 6px;
+        }
+        .stTextArea textarea {
+            background: #232526;
+            color: #fff;
+            border-radius: 6px;
+        }
+        .stDownloadButton>button {
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            color: #fff;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .stProgress>div>div>div>div {
+            background: linear-gradient(90deg, #ff512f 0%, #dd2476 100%) !important;
+        }
+        .stExpanderHeader {
+            font-size: 1.1em;
+            color: #ffb347 !important;
+        }
+        .stSidebar {
+            background: #232526 !important;
+        }
+        .stMarkdown h3 {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        footer {
+            visibility: hidden;
+        }
+        .custom-footer {
+            position: fixed;
+            left: 0; right: 0; bottom: 0;
+            width: 100%;
+            background: rgba(31,28,44,0.95);
+            color: #fff;
+            text-align: center;
+            padding: 0.5em 0 0.5em 0;
+            font-size: 1em;
+            z-index: 100;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # --- Модный заголовок с эмодзи ---
+    st.markdown("""
+    <h1 style='text-align: center; font-size: 2.7em; margin-bottom: 0.2em;'>🦄 Plagiarism Checker <span style='font-size:0.7em;'>by SergeyLocal</span></h1>
+    <h3 style='text-align: center; color: #ffb347; margin-top: 0;'>Проверь свой текст на оригинальность и перефразируй по-новому! 🚀</h3>
+    """, unsafe_allow_html=True)
+
     # Инициализация состояния сессии
     if 'api_key' not in st.session_state:
         st.session_state['api_key'] = DEFAULT_API_KEY
     
-    st.title("Проверка на плагиат")
-    
     # Боковая панель для настроек
     with st.sidebar:
-        st.header("Настройки")
+        st.markdown("""
+        <h2 style='color:#ffb347;'>⚙️ Настройки</h2>
+        """, unsafe_allow_html=True)
         api_key = st.text_input("Perplexity API Key", value=st.session_state['api_key'], type="password")
         if api_key:
             st.session_state['api_key'] = api_key
         if DEFAULT_API_KEY:
             st.success("API ключ загружен из .env файла")
+        st.markdown("""
+        <hr style='border:1px solid #444; margin:1em 0;'>
+        <div style='color:#aaa; font-size:0.95em;'>
+        <b>Поддержка:</b> <a href='https://github.com/SergeyLocal/plagiarism_checker' style='color:#38ef7d;' target='_blank'>GitHub</a>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.write("Загрузите два файла для сравнения (поддерживаемые форматы: DOCX, PDF, FB2, TXT)")
+    st.markdown("""
+    <div style='margin-bottom:1.5em;'></div>
+    <div style='background:rgba(35,37,38,0.7); border-radius:16px; padding:1.5em; box-shadow:0 2px 16px #0002;'>
+    <b>Загрузите два файла для сравнения (DOCX, PDF, FB2, TXT)</b>
+    </div>
+    """, unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("Первый файл")
+        st.markdown("<h4>📄 Первый файл</h4>", unsafe_allow_html=True)
         file1 = st.file_uploader("Выберите первый файл", type=['docx', 'pdf', 'fb2', 'txt'])
 
     with col2:
-        st.subheader("Второй файл")
+        st.markdown("<h4>📄 Второй файл</h4>", unsafe_allow_html=True)
         file2 = st.file_uploader("Выберите второй файл", type=['docx', 'pdf', 'fb2', 'txt'])
 
     if file1 is not None and file2 is not None:
@@ -185,27 +280,32 @@ def main():
             similarity = calculate_similarity(processed_text1, processed_text2)
             
             # Display results
-            st.subheader("Результаты анализа")
             similarity_percentage = similarity * 100
             
-            # Create a progress bar for visualization
+            # --- Модный прогресс-бар с эмодзи ---
+            st.markdown(f"""
+            <div style='margin:1.5em 0;'>
+                <div style='font-size:1.2em;'>
+                    <b>Результаты анализа</b> <span style='font-size:1.5em;'>{'🟢' if similarity_percentage < 30 else ('🟠' if similarity_percentage < 60 else '🔴')}</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
             st.progress(similarity)
             
             if similarity_percentage < 30:
-                result_color = "green"
-                verdict = "Низкий уровень сходства"
+                result_color = "#38ef7d"
+                verdict = "Низкий уровень сходства — оригинально!"
             elif similarity_percentage < 60:
-                result_color = "orange"
-                verdict = "Средний уровень сходства"
+                result_color = "#ffb347"
+                verdict = "Средний уровень сходства — будь осторожен!"
             else:
-                result_color = "red"
-                verdict = "Высокий уровень сходства"
+                result_color = "#ff512f"
+                verdict = "Высокий уровень сходства — ⚠️ Плагиат!"
 
-            st.markdown(f"<h3 style='color: {result_color};'>Сходство: {similarity_percentage:.2f}% - {verdict}</h3>", 
-                       unsafe_allow_html=True)
+            st.markdown(f"<h3 style='color: {result_color};'>Сходство: {similarity_percentage:.2f}% — {verdict}</h3>", unsafe_allow_html=True)
 
             # Show text comparison
-            with st.expander("Показать тексты"):
+            with st.expander("👀 Показать тексты"):
                 col1, col2 = st.columns(2)
                 with col1:
                     st.text_area("Текст 1", text1, height=300)
@@ -213,38 +313,34 @@ def main():
                     st.text_area("Текст 2", text2, height=300)
 
             # Добавляем кнопки для перефразирования текста
-            st.subheader("Перефразирование текста")
+            st.markdown("<h4>🤖 Перефразирование текста</h4>", unsafe_allow_html=True)
             if not st.session_state['api_key']:
                 st.warning("Для использования функции перефразирования, пожалуйста, введите API ключ Perplexity в боковой панели.")
             else:
                 col1, col2 = st.columns(2)
                 with col1:
-                    if st.button("Перефразировать текст 1"):
+                    if st.button("✨ Перефразировать текст 1"):
                         with st.spinner("Перефразирование текста 1..."):
                             rewritten_text1 = rewrite_text(text1, st.session_state['api_key'])
                             if rewritten_text1:
-                                st.success("Текст успешно перефразирован!")
+                                st.success("Текст успешно перефразирован! 🥳")
                                 st.text_area("Перефразированный текст 1", rewritten_text1, height=300)
-                                
-                                # Добавляем кнопку для скачивания
                                 st.download_button(
-                                    label="Скачать перефразированный текст 1",
+                                    label="⬇️ Скачать перефразированный текст 1",
                                     data=rewritten_text1,
                                     file_name="rewritten_text1.txt",
                                     mime="text/plain"
                                 )
                 
                 with col2:
-                    if st.button("Перефразировать текст 2"):
+                    if st.button("✨ Перефразировать текст 2"):
                         with st.spinner("Перефразирование текста 2..."):
                             rewritten_text2 = rewrite_text(text2, st.session_state['api_key'])
                             if rewritten_text2:
-                                st.success("Текст успешно перефразирован!")
+                                st.success("Текст успешно перефразирован! 🥳")
                                 st.text_area("Перефразированный текст 2", rewritten_text2, height=300)
-                                
-                                # Добавляем кнопку для скачивания
                                 st.download_button(
-                                    label="Скачать перефразированный текст 2",
+                                    label="⬇️ Скачать перефразированный текст 2",
                                     data=rewritten_text2,
                                     file_name="rewritten_text2.txt",
                                     mime="text/plain"
@@ -252,6 +348,13 @@ def main():
 
         except Exception as e:
             st.error(f"Произошла ошибка при обработке файлов: {str(e)}")
+
+    # --- Модный футер ---
+    st.markdown("""
+    <div class='custom-footer'>
+        <span>Made with ❤️ for <b>молодёжь</b> | <a href='https://github.com/SergeyLocal/plagiarism_checker' style='color:#38ef7d;' target='_blank'>GitHub</a> | <a href='https://t.me/SergeyLocal' style='color:#ffb347;' target='_blank'>Telegram</a></span>
+    </div>
+    """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main() 
