@@ -14,6 +14,8 @@ from dotenv import load_dotenv
 import os
 from lxml import etree
 import concurrent.futures
+import streamlit_lottie as st_lottie
+import random
 
 # Загружаем переменные окружения
 load_dotenv()
@@ -202,6 +204,37 @@ def main():
             font-size: 1em;
             z-index: 100;
         }
+        /* Анимация для кнопок */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .stButton>button:hover {
+            animation: pulse 0.5s infinite;
+        }
+        /* Кастомные уведомления (toast) */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(35,37,38,0.9);
+            color: #fff;
+            padding: 1em;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px #0002;
+            z-index: 1000;
+            animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+            animation-fill-mode: forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
         </style>
         """,
         unsafe_allow_html=True
@@ -216,7 +249,9 @@ def main():
     # Инициализация состояния сессии
     if 'api_key' not in st.session_state:
         st.session_state['api_key'] = DEFAULT_API_KEY
-    
+    if 'theme' not in st.session_state:
+        st.session_state['theme'] = 'dark'
+
     # Боковая панель для настроек
     with st.sidebar:
         st.markdown("""
@@ -227,6 +262,24 @@ def main():
             st.session_state['api_key'] = api_key
         if DEFAULT_API_KEY:
             st.success("API ключ загружен из .env файла")
+        # Переключатель темы
+        theme = st.radio("Тема", ["Темная", "Светлая"], index=0 if st.session_state['theme'] == 'dark' else 1)
+        if theme == "Светлая" and st.session_state['theme'] != 'light':
+            st.session_state['theme'] = 'light'
+            st.markdown("""
+            <script>
+            document.body.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
+            document.body.style.color = '#333';
+            </script>
+            """, unsafe_allow_html=True)
+        elif theme == "Темная" and st.session_state['theme'] != 'dark':
+            st.session_state['theme'] = 'dark'
+            st.markdown("""
+            <script>
+            document.body.style.background = 'linear-gradient(135deg, #1f1c2c 0%, #928dab 100%)';
+            document.body.style.color = '#fff';
+            </script>
+            """, unsafe_allow_html=True)
         st.markdown("""
         <hr style='border:1px solid #444; margin:1em 0;'>
         <div style='color:#aaa; font-size:0.95em;'>
