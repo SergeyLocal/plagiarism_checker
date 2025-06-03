@@ -13,6 +13,7 @@ import time
 from dotenv import load_dotenv
 import os
 from lxml import etree
+import concurrent.futures
 
 # Загружаем переменные окружения
 load_dotenv()
@@ -71,7 +72,7 @@ def calculate_similarity(text1, text2):
 
 def rewrite_text(text, api_key):
     """
-    Перефразирует текст с помощью Perplexity API
+    Перефразирует текст с помощью Perplexity API параллельно по чанкам
     """
     if not api_key:
         raise ValueError("Требуется API ключ Perplexity")
@@ -83,9 +84,9 @@ def rewrite_text(text, api_key):
     
     # Разбиваем текст на части по 2000 символов
     chunks = [text[i:i + 2000] for i in range(0, len(text), 2000)]
-    rewritten_chunks = []
+    rewritten_chunks = [None] * len(chunks)
 
-    for chunk in chunks:
+    def paraphrase_chunk(idx, chunk):
         try:
             data = {
                 "model": "sonar-reasoning-pro",  # новая поддерживаемая модель
@@ -100,29 +101,28 @@ def rewrite_text(text, api_key):
                     }
                 ]
             }
-
             response = requests.post(
                 "https://api.perplexity.ai/chat/completions",
                 headers=headers,
                 json=data
             )
-            
             if response.status_code == 200:
                 result = response.json()
-                rewritten_chunks.append(result['choices'][0]['message']['content'])
+                return idx, result['choices'][0]['message']['content']
             else:
                 try:
                     error_detail = response.json()
                 except Exception:
                     error_detail = response.text
-                st.error(f"Ошибка API: {response.status_code} - {error_detail}")
-                return None
-                
-            time.sleep(1)  # Небольшая задержка между запросами
-            
+                return idx, f"[Ошибка API: {response.status_code} - {error_detail}]"
         except Exception as e:
-            st.error(f"Ошибка при перефразировании: {str(e)}")
-            return None
+            return idx, f"[Ошибка при перефразировании: {str(e)}]"
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = [executor.submit(paraphrase_chunk, idx, chunk) for idx, chunk in enumerate(chunks)]
+        for future in concurrent.futures.as_completed(futures):
+            idx, rewritten = future.result()
+            rewritten_chunks[idx] = rewritten
 
     return "\n".join(rewritten_chunks)
 
