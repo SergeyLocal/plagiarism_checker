@@ -131,60 +131,60 @@ def rewrite_text(text, api_key):
 def main():
     st.set_page_config(page_title="Проверка на плагиат — Plagiarism Checker", layout="wide")
 
-    # --- Кастомный CSS для модного дизайна ---
+    # --- Кастомный CSS для современного дизайна ---
     st.markdown(
         """
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
         html, body, [class*="css"]  {
-            font-family: 'Montserrat', sans-serif !important;
-            background: linear-gradient(135deg, #1f1c2c 0%, #928dab 100%) fixed;
+            font-family: 'Inter', sans-serif !important;
+            background: #121212;
             color: #fff !important;
         }
         .stApp {
             background: transparent;
         }
         .stButton>button {
-            background: linear-gradient(90deg, #ff512f 0%, #dd2476 100%);
+            background: #2d2d2d;
             color: #fff;
             border: none;
-            border-radius: 8px;
+            border-radius: 4px;
             padding: 0.6em 1.5em;
             font-weight: bold;
-            font-size: 1.1em;
-            box-shadow: 0 4px 20px #dd247655;
+            font-size: 1em;
+            box-shadow: 0 2px 8px #0002;
             transition: 0.2s;
         }
         .stButton>button:hover {
-            background: linear-gradient(90deg, #24c6dc 0%, #5433ff 100%);
+            background: #3d3d3d;
             color: #fff;
-            transform: scale(1.05);
+            transform: translateY(-2px);
         }
         .stTextInput>div>div>input[type="password"] {
-            background: #232526;
+            background: #2d2d2d;
             color: #fff;
-            border-radius: 6px;
+            border-radius: 4px;
         }
         .stTextArea textarea {
-            background: #232526;
+            background: #2d2d2d;
             color: #fff;
-            border-radius: 6px;
+            border-radius: 4px;
         }
         .stDownloadButton>button {
-            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            background: #2d2d2d;
             color: #fff;
-            border-radius: 8px;
+            border-radius: 4px;
             font-weight: bold;
         }
         .stProgress>div>div>div>div {
-            background: linear-gradient(90deg, #ff512f 0%, #dd2476 100%) !important;
+            background: #3d3d3d !important;
         }
         .stExpanderHeader {
             font-size: 1.1em;
-            color: #ffb347 !important;
+            color: #fff !important;
         }
         .stSidebar {
-            background: #232526 !important;
+            background: #1e1e1e !important;
         }
         .stMarkdown h3 {
             font-size: 1.5em;
@@ -197,7 +197,7 @@ def main():
             position: fixed;
             left: 0; right: 0; bottom: 0;
             width: 100%;
-            background: rgba(31,28,44,0.95);
+            background: #1e1e1e;
             color: #fff;
             text-align: center;
             padding: 0.5em 0 0.5em 0;
@@ -218,11 +218,11 @@ def main():
             position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(35,37,38,0.9);
+            background: #2d2d2d;
             color: #fff;
             padding: 1em;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px #0002;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px #0002;
             z-index: 1000;
             animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
             animation-fill-mode: forwards;
@@ -243,7 +243,7 @@ def main():
     # --- Модный заголовок с эмодзи ---
     st.markdown("""
     <h1 style='text-align: center; font-size: 2.7em; margin-bottom: 0.2em;'>🦄 Plagiarism Checker <span style='font-size:0.7em;'>by SergeyLocal</span></h1>
-    <h3 style='text-align: center; color: #ffb347; margin-top: 0;'>Проверь свой текст на оригинальность и перефразируй по-новому! 🚀</h3>
+    <h3 style='text-align: center; color: #fff; margin-top: 0;'>Проверь свой текст на оригинальность и перефразируй по-новому! 🚀</h3>
     """, unsafe_allow_html=True)
 
     # Инициализация состояния сессии
@@ -255,7 +255,7 @@ def main():
     # Боковая панель для настроек
     with st.sidebar:
         st.markdown("""
-        <h2 style='color:#ffb347;'>⚙️ Настройки</h2>
+        <h2 style='color:#fff;'>⚙️ Настройки</h2>
         """, unsafe_allow_html=True)
         api_key = st.text_input("Perplexity API Key", value=st.session_state['api_key'], type="password")
         if api_key:
@@ -268,7 +268,7 @@ def main():
             st.session_state['theme'] = 'light'
             st.markdown("""
             <script>
-            document.body.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
+            document.body.style.background = '#f5f5f5';
             document.body.style.color = '#333';
             </script>
             """, unsafe_allow_html=True)
@@ -276,7 +276,7 @@ def main():
             st.session_state['theme'] = 'dark'
             st.markdown("""
             <script>
-            document.body.style.background = 'linear-gradient(135deg, #1f1c2c 0%, #928dab 100%)';
+            document.body.style.background = '#121212';
             document.body.style.color = '#fff';
             </script>
             """, unsafe_allow_html=True)
@@ -289,7 +289,7 @@ def main():
 
     st.markdown("""
     <div style='margin-bottom:1.5em;'></div>
-    <div style='background:rgba(35,37,38,0.7); border-radius:16px; padding:1.5em; box-shadow:0 2px 16px #0002;'>
+    <div style='background:#2d2d2d; border-radius:8px; padding:1.5em; box-shadow:0 2px 8px #0002;'>
     <b>Загрузите два файла для сравнения (DOCX, PDF, FB2, TXT)</b>
     </div>
     """, unsafe_allow_html=True)
